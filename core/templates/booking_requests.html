@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Booking Requests</title>
+    <!-- Add Bootstrap CSS and JavaScript links here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        /* Add custom CSS for styling */
+        body {
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Booking Requests</h1>
+        <ul class="list-unstyled">
+            {% for booking_request in booking_requests %}
+                <li>
+                    <strong>Room:</strong> {{ booking_request.room.room_number }}<br>
+                    <strong>Check-in Date:</strong> {{ booking_request.check_in_date }}<br>
+                    <strong>Check-out Date:</strong> {{ booking_request.check_out_date }}<br>
+                    <strong>Student:</strong> {{ booking_request.student.user.username }}<br>
+                    <strong>Status:</strong> {{ booking_request.status }}<br>
+                    <a href="{% url 'approve_booking' booking_request.id %}" class="btn btn-success mr-2">Approve</a>
+                    <a href="{% url 'reject_booking' booking_request.id %}" class="btn btn-danger">Reject</a>
+                </li>
+            {% empty %}
+                <li>No booking requests.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

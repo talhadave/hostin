@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Hostel List{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom CSS for Hostel List page */
+    body {
+        background: linear-gradient(to right, #87CEEB, #d9e2de);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border: 1px solid #e1e1e1;
+        border-radius: 25px;
+    }
+
+    .table {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <h1 class="form-title text-center">Hostel List</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Hostel Name</th>
+                <th>Location</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if user.hosteladmin %}
+                {# Display admin's hostel list #}
+                {% for hostel in admin_hostels %}
+                    <tr>
+                        <td>{{ hostel.name }}</td>
+                        <td>{{ hostel.hostel_adress }}</td>
+                        <td>
+                            <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary">View Details</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No hostels available for administrators.</td>
+                    </tr>
+                {% endfor %}
+                {% if user.hosteladmin %}
+        <a href="{% url 'hostel_create' %}" class="btn btn-primary mb-3">Create New Hostel</a>
+    {% endif %}
+            {% else %}
+                {# Display student's hostel list #}
+                {% for hostel in student_hostels %}
+                    <tr>
+                        <td>{{ hostel.name }}</td>
+                        <td>{{ hostel.hostel_adress }}</td>
+                        <td>
+                            <a href="{% url 'hostel_detail_for_student' hostel.id %}" class="btn btn-primary">View Details</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No hostels available for students.</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

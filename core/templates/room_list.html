@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Room List{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="display-4 animate__animated animate__fadeInDown">Room List</h1>
+        <ul class="list-group animate__animated animate__fadeIn">
+            {% for room in rooms %}
+                <li class="list-group-item">
+                    <a href="{% url 'room_detail' room.id %}" class="animate__animated animate__fadeInLeft">Room {{ room.room_number }}</a> - Price: ${{ room.room_price }}
+                </li>
+            {% empty %}
+                <li class="list-group-item animate__animated animate__fadeInLeft">No rooms available.</li>
+            {% endfor %}
+        </ul>
+        {% if hostel.id %}
+            <a href="{% url 'room_create' hostel.id %}" class="btn btn-primary mt-3 animate__animated animate__fadeInLeft">Create a Room</a>
+        {% else %}
+            <p class="text-danger animate__animated animate__fadeInLeft">Please specify a valid hostel to create a room.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

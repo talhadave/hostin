@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel List for Student</title>
+    <!-- Include Bootstrap CSS or any other styling you prefer -->
+</head>
+<body>
+    <h1>Hostel List</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Hostel Name</th>
+                <th>Location</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hostel in hostels %}
+                <tr>
+                    <td>{{ hostel.name }}</td>
+                    <td>{{ hostel.hostel_adress }}</td>
+                    <td>
+                        <a href="{% url 'hostel_detail_for_student' hostel.id %}" class="btn btn-primary">View Details</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No hostels available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

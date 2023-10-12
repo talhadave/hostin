@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Room Detail{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <h1 class="display-4 animate__animated animate__fadeInDown">Room Detail</h1>
+        <h2 class="animate__animated animate__fadeInLeft">Room {{ room.room_number }}</h2>
+        <p class="animate__animated animate__fadeInLeft">Price: ${{ room.room_price }}</p>
+        <!-- Add more room details here -->
+
+        <!-- Add a room image if available -->
+        {% if room.room_image %}
+            <img src="{{ room.room_image.url }}" alt="{{ room.room_number }}" class="img-fluid mt-3 animate__animated animate__fadeIn">
+        {% endif %}
+
+        <a href="{% url 'room_update' room.id %}" class="btn btn-primary mt-3 animate__animated animate__fadeIn">Edit Room</a>
+        <a href="{% url 'room_delete' room.id %}" class="btn btn-danger mt-3 animate__animated animate__fadeIn">Delete Room</a>
+        <a href="{% url 'room_list' %}" class="btn btn-secondary mt-3 animate__animated animate__fadeIn">Back to Room List</a>
+    </div>
+    <div class="col-lg-6">
+        <!-- Add any additional content here, e.g., more room details -->
+    </div>
+</div>
+{% endblock %}

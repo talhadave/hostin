@@ -1,0 +1,108 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOSTINN</title>
+    <!-- Add Bootstrap CSS CDN link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add your custom CSS here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- icon bootsrap -->
+
+    <!-- Add Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class=" base-container">
+        <a class="navbar-brand" href="#">HOSTIIN</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'hostel_list' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    <li class="nav-item ml-4">
+                        {% if user.student %}
+                            <a class="nav-link" href="{% url 'student_dashboard' %}">Student Dashboard</a>
+                        {% elif user.hosteladmin %}
+                            <a class="nav-link" href="{% url 'hostel_admin_dashboard' %}">Hostel Admin Dashboard</a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item ml-4">
+                        <form method="get" action="{% url 'search_hostels' %}">
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-pill" name="q"
+                                    placeholder="Search by University Name">
+                                <div class="input-group-append rounded-pill">
+                                    <button class="btn btn-primary rounded-pill" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+    <div class="container mt-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Page Content -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1 class="display-4 animate__animated animate__fadeInLeft">Welcome to HOSTINN</h1>
+
+                <p class="lead animate__animated animate__fadeInLeft">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi quia, temporibus repellat doloribus facere blanditiis? Tempora ex dolore dignissimos. Nisi consequatur rem sunt sapiente dolor nam tempora, eaque repudiandae officia ab accusamus?
+                    elit.</p>
+                <a href="#" class="btn btn-primary btn-lg animate__animated animate__fadeInLeft">Learn More</a>
+            </div>
+            <div class="col-lg-6">
+                <!-- Add a responsive image with animation -->
+                <img src="{% static 'images/logo.jpg' %} alt="Logo Image" class="img-fluid animate__animated animate__fadeInRight">
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery CDN links -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Animate.css for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.js"></script>
+
+</body>
+
+</html>

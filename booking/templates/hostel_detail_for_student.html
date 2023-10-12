@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Hostel Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8"> <!-- Increased the column size -->
+            <div class="card p-4"> <!-- Increased padding -->
+                <div class="card-body">
+                    <h1 class="card-title display-3 animate__animated animate__fadeInLeft">Hostel Detail</h1> <!-- Increased font size -->
+                    <h2 class="display-4">{{ hostel.hostel_name }}</h2> <!-- Increased font size -->
+                    <p class="h4">Location: {{ hostel.hostel_adress }}</p> <!-- Increased font size -->
+
+                    <!-- Display Hostel Image -->
+                    {% if hostel.picture %}
+                        <img src="{{ hostel.picture.url }}" alt="{{ hostel.hostel_name }}" class="img-fluid mt-4 display-4 animate__animated animate__fadeInLeft">
+                    {% endif %}
+
+                    <a href="{% url 'book_room' hostel.id %}" class="btn btn-primary mt-4 btn-lg">Book a Room</a> <!-- Increased button size -->
+                    <a href="{% url 'hostel_list_for_student' %}" class="btn btn-secondary mt-4 btn-lg">Back to Hostel List</a> <!-- Increased button size -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Display Rooms Associated with the Hostel -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="display-4 animate__animated animate__fadeInLeft">Rooms in {{ hostel.hostel_name }}</h2>
+            <ul class="list-group">
+                {% for room in hostel.rooms_set.all %}
+                    <li class="list-group-item animate__animated animate__fadeInLeft">
+                        <a href="{% url 'room_detail' room.id %}" class="text-decoration-none text-dark">
+                            <strong class="h5">Room {{ room.room_number }}</strong> <!-- Increased font size -->
+                        </a> - Price: ${{ room.room_price }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item animate__animated animate__fadeInLeft h4">No rooms available for this hostel.</li> <!-- Increased font size -->
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

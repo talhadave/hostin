@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Hostel Detail{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom CSS for Hostel Detail page */
+    body {
+        background: linear-gradient(to right, #87CEEB, #d9e2de);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border: 1px solid #e1e1e1;
+        border-radius: 25px;
+    }
+
+    .hostel-detail-title {
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .hostel-image {
+        max-width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    .btn-action {
+        font-size: 1.2rem;
+        border-radius: 5px;
+        padding: 10px 20px;
+    }
+
+    .room-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    /* Add a subtle background color for buttons */
+    .btn-primary,
+    .btn-danger,
+    .btn-secondary,
+    .btn-success {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+</style>
+
+<div class="container">
+    <h1 class="form-title text-center">Hostel Detail</h1>
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <h2>{{ hostel.hostel_name }}</h2>
+            <p>Location: {{ hostel.hostel_adress }}</p>
+
+            <!-- Display Hostel Image -->
+            {% if hostel.picture %}
+                <img src="{{ hostel.picture.url }}" alt="{{ hostel.hostel_name }}" class="hostel-image mt-3">
+            {% endif %}
+
+            <!-- Buttons with Bootstrap classes and improved styling -->
+            <div class="mt-4 text-center">
+                <a href="{% url 'hostel_update' hostel.id %}" class="btn btn-primary btn-action">Edit Hostel</a>
+                <a href="{% url 'hostel_delete' hostel.id %}" class="btn btn-danger btn-action">Delete Hostel</a>
+                <a href="{% url 'hostel_list' %}" class="btn btn-secondary btn-action">Back to Hostel List</a>
+            </div>
+
+            <!-- Add Room Creation Link/Button with improved styling -->
+            <a href="{% url 'room_create' hostel.id %}" class="btn btn-success mt-4 btn-action">Add Room</a>
+        </div>
+    </div>
+
+    <!-- Display Rooms Associated with the Hostel in a row-wise format -->
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <h2>Rooms in {{ hostel.hostel_name }}</h2>
+            <div class="room-list">
+                {% for room in hostel.rooms_set.all %}
+                    <div class="list-group-item">
+                        <!-- Display room image, if available -->
+                        {% if room.picture %}
+                            <img src="{{ room.picture.url }}" alt="{{ room.room_number }} Image" class="hostel-image mt-3">
+                        {% endif %}
+                        <a href="{% url 'room_detail' room.id %}">Room {{ room.room_number }}</a> - Price: ${{ room.room_price }}
+                    </div>
+                {% empty %}
+                    <div class="list-group-item text-center">No rooms available for this hostel.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

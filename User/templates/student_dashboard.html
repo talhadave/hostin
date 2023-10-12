@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom CSS for Student Dashboard */
+    body {
+        background: linear-gradient(to right, #87CEEB, #d9e2de);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .dashboard-header {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border: 1px solid #e1e1e1;
+        border-radius: 25px;
+        text-align: center;
+    }
+
+    .dashboard-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-info {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .logout-link {
+        font-size: 1.2rem;
+        background-color: #dc3545;
+        color: #fff;
+        border-radius: 5px;
+        padding: 10px 20px;
+        text-decoration: none;
+    }
+</style>
+
+<div class="container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Welcome, {{ user.username }}</h1>
+        <p class="dashboard-info">University Name: {{ student.university_name }}</p>
+        <!-- Add student-related information and options here -->
+        <a href="{% url 'booking_status' %}" class="btn btn-primary">Booking Status</a>
+        <a href="{% url 'logout' %}" class="logout-link">Logout</a>
+    </div>
+</div>
+{% endblock %}
