@@ -23,14 +23,14 @@
     <!-- Navigation Bar -->
     <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class=" base-container">
+    
         <a class="navbar-brand" href="#">HOSTIIN</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'hostel_list' %}">Home</a>
                 </li>
@@ -47,14 +47,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                     </li>
-                    <li class="nav-item ml-4">
-                        {% if user.student %}
-                            <a class="nav-link" href="{% url 'student_dashboard' %}">Student Dashboard</a>
-                        {% elif user.hosteladmin %}
-                            <a class="nav-link" href="{% url 'hostel_admin_dashboard' %}">Hostel Admin Dashboard</a>
-                        {% endif %}
-                    </li>
-                    <li class="nav-item ml-4">
+                {% endif %}
+            </ul>
+            {% if user.student %}
+                        
+                    
                         <form method="get" action="{% url 'search_hostels' %}">
                             <div class="input-group">
                                 <input type="text" class="form-control rounded-pill" name="q"
@@ -66,11 +63,10 @@
                                 </div>
                             </div>
                         </form>
-                    </li>
-                {% endif %}
-            </ul>
+                
+                    {% endif %}
         </div>
-    </div>
+
 </nav>
 
 

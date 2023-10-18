@@ -24,27 +24,7 @@
         margin-bottom: 20px;
     }
 
-    .btn-primary,
-    .btn-secondary {
-        font-size: 1.2rem;
-        border-radius: 5px;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-
-    .btn-action {
-        margin-right: 10px;
-    }
+    
 </style>
 
 <div class="container">
@@ -54,8 +34,8 @@
         {{ form.as_p }}
 
         <div class="mt-4 text-center">
-            <button type="submit" class="btn btn-primary btn-action">Save</button>
-            <a href="{% url 'room_list' %}" class="btn btn-secondary btn-action">Cancel</a>
+            <button type="submit" class="btn btn-success rounded-pill">Save</button>
+            <button class="btn btn-secondary rounded-pill" onclick="window.history.back();">Cancel</a>
         </div>
     </form>
 </div>

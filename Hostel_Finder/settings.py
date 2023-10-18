@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'core',
     'User',
     'booking',
+    'django_google_maps',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

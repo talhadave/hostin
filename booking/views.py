@@ -8,15 +8,12 @@ def hostel_list_for_student(request):
     # Get hostels based on the student's university
     user_university = request.user.student.university_name
     # user_university = request.user.student.university_name
-    university = University.objects.get(name=user_university)
-    hostels = Hostel.objects.filter(university=university)
-    print(hostels)
+    hostels = Hostel.objects.filter(university__name=user_university)
     return render(request, 'hostel_list_for_student.html', {'hostels': hostels})
 
 def hostel_detail_for_student(request, hostel_id):
     hostel = get_object_or_404(Hostel, id=hostel_id)
-    rooms_available = rooms.objects.filter(hostel=hostel)
-    return render(request, 'hostel_detail_for_student.html', {'hostel': hostel, 'rooms_available': rooms_available})
+    return render(request, 'hostel_detail_for_student.html', {'hostel': hostel, })
 
 # views.py
 from django.shortcuts import render, redirect, get_object_or_404

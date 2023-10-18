@@ -13,8 +13,7 @@ class Student(models.Model):
 
 class HostelAdmin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    Hostel_name = models.CharField(max_length=100) 
-    university_name = models.ForeignKey(University, on_delete=models.CASCADE)  # Add the university_name field
+ 
     # Add other hostel admin-related fields
 
     def __str__(self):

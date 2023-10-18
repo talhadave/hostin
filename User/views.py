@@ -31,38 +31,13 @@ def hostel_admin_signup(request):
         form = HostelAdminSignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            university_name = form.cleaned_data['university_name']
-            hostel_admin = HostelAdmin(user=user, university_name=university_name)
+            hostel_admin = HostelAdmin(user=user)
             hostel_admin.save()
             login(request, user)
             return redirect('hostel_admin_dashboard')  # Redirect to the hostel admin dashboard
     else:
         form = HostelAdminSignupForm()
     return render(request, 'hostel_admin_signup.html', {'form': form})
-
-
-# views.py
-from django.shortcuts import render
-from .models import HostelAdmin
-
-def hostel_admin_dashboard(request):
-    # Ensure the user is authenticated and is a hostel admin
-    if request.user.is_authenticated and HostelAdmin.objects.filter(user=request.user).exists():
-        hostel_admin = HostelAdmin.objects.get(user=request.user)
-        return render(request, 'hostel_admin_dashboard.html', {'user': request.user, 'hostel_admin': hostel_admin})
-    else:
-        return redirect('choice_page')  # Redirect to the choice page if not authenticated or not a hostel admin
-# views.py
-from django.shortcuts import render
-from .models import Student
-
-def student_dashboard(request):
-    # Ensure the user is authenticated and is a student
-    if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
-        student = Student.objects.get(user=request.user)
-        return render(request, 'student_dashboard.html', {'user': request.user, 'student': student})
-    else:
-        return redirect('choice_page')  # Redirect to the choice page if not authenticated or not a student
 
 
 

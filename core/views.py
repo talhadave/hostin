@@ -58,21 +58,21 @@ def hostel_create(request):
 from django.shortcuts import render, redirect
 from .forms import RoomForm
 from .models import Hostel  # Import the Hostel model
-
+from django.urls import reverse_lazy
 def room_create(request, hostel_id):
     # Get the hostel instance using the provided hostel_id
-    hostel = Hostel.objects.get(pk=hostel_id)
 
     if request.method == 'POST':
-        form = RoomForm(request.POST, request.FILES)
+        hostel = Hostel.objects.get(pk=hostel_id)
+        form = RoomForm(hostel_id=hostel_id, data=request.POST, files=request.FILES)
+        
         if form.is_valid():
-            # Create a room associated with the hostel
             room = form.save(commit=False)
             room.hostel = hostel  # Associate the room with the hostel
             room.save()
-            return redirect('room_list')
+            return redirect(reverse_lazy('hostel_detail', kwargs={"hostel_id":hostel_id}))
     else:
-        form = RoomForm()
+        form = RoomForm(hostel_id=hostel_id)
     
     return render(request, 'room_form.html', {'form': form})
 
@@ -179,24 +179,24 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def search_hostels(request):
     search_query = request.GET.get('q')
-
-    universities = University.objects.all()
-    hostels = None
-
     if search_query:
-        # Check if the search query is a university name
-        university = University.objects.filter(name__icontains=search_query).first()
+        universities = University.objects.filter(name__icontains=search_query)
+    else:
+        universities = None
 
-        if university:
-            # If a university is found, get hostels associated with that university
-            hostels = Hostel.objects.filter(university=university)
-        else:
-            # If no university is found, search hostels by hostel name
-            hostels = Hostel.objects.filter(hostel_name__icontains=search_query)
+    # if search_query:
+    #     # Check if the search query is a university name
+    #     university = University.objects.filter(name__icontains=search_query).first()
+
+    #     if university:
+    #         # If a university is found, get hostels associated with that university
+    #         hostels = Hostel.objects.filter(university=university)
+    #     else:
+    #         # If no university is found, search hostels by hostel name
+    #         hostels = Hostel.objects.filter(hostel_name__icontains=search_query)
 
     context = {
         'universities': universities,
-        'hostels': hostels,
     }
 
     return render(request, 'search_hostels.html', context)

@@ -38,10 +38,10 @@
                 {# Display admin's hostel list #}
                 {% for hostel in admin_hostels %}
                     <tr>
-                        <td>{{ hostel.name }}</td>
+                        <td>{{ hostel.hostel_name }}</td>
                         <td>{{ hostel.hostel_adress }}</td>
                         <td>
-                            <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary">View Details</a>
+                            <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
                         </td>
                     </tr>
                 {% empty %}
@@ -49,17 +49,17 @@
                         <td colspan="3">No hostels available for administrators.</td>
                     </tr>
                 {% endfor %}
-                {% if user.hosteladmin %}
-        <a href="{% url 'hostel_create' %}" class="btn btn-primary mb-3">Create New Hostel</a>
-    {% endif %}
+                
+                <a href="{% url 'hostel_create' %}" class="btn btn-success rounded-pill mb-3 float-right">Create New Hostel</a>
+                <a href="{% url 'booking_requests' %}" class="btn btn-primary rounded-pill mb-3 float-right">Booking Requests</a>
             {% else %}
-                {# Display student's hostel list #}
+            <a href="{% url 'booking_status' %}" class="btn btn-primary rounded-pill float-right">Booking Status</a>
                 {% for hostel in student_hostels %}
                     <tr>
-                        <td>{{ hostel.name }}</td>
+                        <td>{{ hostel.hostel_name }}</td>
                         <td>{{ hostel.hostel_adress }}</td>
                         <td>
-                            <a href="{% url 'hostel_detail_for_student' hostel.id %}" class="btn btn-primary">View Details</a>
+                            <a href="{% url 'hostel_detail_for_student' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
                         </td>
                     </tr>
                 {% empty %}

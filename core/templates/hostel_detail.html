@@ -62,44 +62,85 @@
     .btn-success {
         background-color: #28a745;
     }
+
+    .btn-size{
+        font-size: large;
+    }
 </style>
 
 <div class="container">
+    <button class="btn-size btn btn-transparent text-black btn-lg" onclick="window.history.back();"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg></button>
     <h1 class="form-title text-center">Hostel Detail</h1>
-    <div class="row mt-4">
-        <div class="col-lg-6">
+    <div class="d-flex justify-content-between" >
+
+        <div>
             <h2>{{ hostel.hostel_name }}</h2>
             <p>Location: {{ hostel.hostel_adress }}</p>
-
-            <!-- Display Hostel Image -->
+        </div>
+            <div class="mt-4">
+                <a href="{% url 'hostel_update' hostel.id %}" class="btn btn-lg btn-transparent text-primary"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                  </svg></a>
+                <a href="{% url 'hostel_delete' hostel.id %}" class="btn btn-lg text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                  </svg></a>
+            </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            
             {% if hostel.picture %}
-                <img src="{{ hostel.picture.url }}" alt="{{ hostel.hostel_name }}" class="hostel-image mt-3">
+                <img class="img-fluid" width="100%" src="{{ hostel.picture.url }}" alt="{{ hostel.hostel_name }}" class="hostel-image mt-3">
             {% endif %}
 
-            <!-- Buttons with Bootstrap classes and improved styling -->
-            <div class="mt-4 text-center">
-                <a href="{% url 'hostel_update' hostel.id %}" class="btn btn-primary btn-action">Edit Hostel</a>
-                <a href="{% url 'hostel_delete' hostel.id %}" class="btn btn-danger btn-action">Delete Hostel</a>
-                <a href="{% url 'hostel_list' %}" class="btn btn-secondary btn-action">Back to Hostel List</a>
-            </div>
+        </div>
+        <div class="col-lg-6">
+            
+            <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, consequuntur! Voluptatum vitae quas voluptatem reprehenderit fugit exercitationem dolor impedit modi tempora, sapiente velit perspiciatis cum? Neque, laborum! Illo, saepe quis!</div>
 
-            <!-- Add Room Creation Link/Button with improved styling -->
-            <a href="{% url 'room_create' hostel.id %}" class="btn btn-success mt-4 btn-action">Add Room</a>
         </div>
     </div>
-
+    
     <!-- Display Rooms Associated with the Hostel in a row-wise format -->
     <div class="row mt-4">
         <div class="col-lg-12">
-            <h2>Rooms in {{ hostel.hostel_name }}</h2>
-            <div class="room-list">
+            <div class="d-flex justify-content-between">
+                <h2 class="m-0 p-0">Rooms in {{ hostel.hostel_name }}</h2>
+                
+                <a href="{% url 'room_create' hostel.id %}" class="btn btn-success rounded-pill">Add Room</a>
+            </div>
+            <div class="mt-4">
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            Room No
+
+                        </div>
+                        <div>
+                            Price
+                        </div>
+
+                    </div>
+                    <!-- Display room image, if available -->
+                    
+                </div>
                 {% for room in hostel.rooms_set.all %}
                     <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a href="{% url 'room_detail' room.id %}"> {{ room.room_number }}</a> 
+
+                            </div>
+                            <div>
+                                 {{ room.room_price }}
+                            </div>
+
+                        </div>
                         <!-- Display room image, if available -->
-                        {% if room.picture %}
-                            <img src="{{ room.picture.url }}" alt="{{ room.room_number }} Image" class="hostel-image mt-3">
-                        {% endif %}
-                        <a href="{% url 'room_detail' room.id %}">Room {{ room.room_number }}</a> - Price: ${{ room.room_price }}
+                        
                     </div>
                 {% empty %}
                     <div class="list-group-item text-center">No rooms available for this hostel.</div>

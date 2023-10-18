@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class University(models.Model):
     name = models.CharField(max_length=100)
+    
     def __str__(self):
                 return f"{self.name}"
 class Hostel(models.Model):
@@ -12,7 +13,7 @@ class Hostel(models.Model):
         university = models.ForeignKey(University, on_delete=models.CASCADE)
         hostel_name= models.CharField(max_length=50)
         hostel_adress=models.CharField(max_length=50)
-        date=models.DateTimeField("Date Registerd",blank=True,null=True)
+        date=models.DateTimeField(auto_now_add=True)
         picture = models.ImageField(upload_to='Hostels/', blank=True, null=True)
 
         def __str__(self):

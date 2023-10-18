@@ -1,25 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if universities %}
-<h2>Universities:</h2>
-<ul>
-    {% for university in universities %}
-        <li>
-            <a href="{% url 'search_hostels' %}?q={{ university.name }}">{{ university.name }}</a>
-        </li>
-    {% endfor %}
-</ul>
-{% endif %}
 
-{% if hostels %}
-<h2>Hostels:</h2>
+{% for university in universities %}
+<h2>{{university.name}}</h2>
 <ul>
-    {% for hostel in hostels %}
+    {% for hostel in university.hostel_set.all %}
         <li>
             <a href="{% url 'hostel_detail_for_student' hostel.id %}">{{ hostel.hostel_name }}</a>
         </li>
     {% endfor %}
 </ul>
-{% endif %}
+{% endfor %}
+
+
+
+
+
+
 {% endblock %}

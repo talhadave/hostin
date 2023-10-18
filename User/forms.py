@@ -1,4 +1,5 @@
 # forms.py
+from typing import Any
 from django import forms
 from django.contrib.auth.models import User 
 from django.contrib.auth.forms import UserCreationForm
@@ -8,6 +9,13 @@ from core.models import University
 
 
 class StudentSignupForm(UserCreationForm):
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs["class"]= "form-control rounded-pill"
+            visible.field.widget.attrs["placeholder"]= visible.field.label
+
+
     university_name = forms.ModelChoiceField(
         queryset=University.objects.all(),
         empty_label="Select your university"
@@ -20,14 +28,14 @@ class StudentSignupForm(UserCreationForm):
 
 
 class HostelAdminSignupForm(UserCreationForm):
-    university_name = forms.ModelChoiceField(
-        queryset=University.objects.all(),
-        empty_label="Select your university"
-    ) # Add the university_name field
-    Hostel_name = forms.CharField(max_length=100) 
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs["class"]= "form-control rounded-pill"
+            visible.field.widget.attrs["placeholder"]= visible.field.label
     class Meta:
         model = User
-        fields = ('username','email', 'password1', 'password2', 'university_name','Hostel_name')
+        fields = ('username','email', 'password1', 'password2')
 
 # forms.py
 from django import forms
