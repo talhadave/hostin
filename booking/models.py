@@ -2,13 +2,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from core.models import rooms
+from User.models import Student
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     room = models.ForeignKey(rooms, on_delete=models.CASCADE)
-    check_in_date = models.DateField()
-    check_out_date = models.DateField()
+    booking_date = models.DateField()
+    user_info = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=10, default='Pending')
 
     def __str__(self):
-        return f"{self.user.username} - {self.room.room_number}"
+        return f"{self.student.user.username} - {self.room.room_type}"

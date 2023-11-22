@@ -1,10 +1,13 @@
 # views.py
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib.auth.models import User  # Import the User model
+from django.contrib.auth import logout,login, authenticate
+from django.shortcuts import render, redirect,get_object_or_404
+from django.contrib.auth.models import User
+from django.urls import reverse 
 from .forms import StudentSignupForm, HostelAdminSignupForm
-from .models import Student, HostelAdmin
+from .models import Student, HostelAdmin,Profile
 from django.http import HttpResponse
+from .forms import StudentLoginForm, HostelAdminLoginForm,UserUpdateForm, ProfileUpdateForm
+from django.core.exceptions import ObjectDoesNotExist
 
 def choice_page(request):
     if request.user.is_authenticated:
@@ -19,6 +22,7 @@ def student_signup(request):
             university_name = form.cleaned_data['university_name']
             student = Student(user=user, university_name=university_name)
             student.save()
+            Profile.objects.get_or_create(student=student) 
             login(request, user)
             return redirect('student_login')
     else:
@@ -34,24 +38,13 @@ def hostel_admin_signup(request):
             hostel_admin = HostelAdmin(user=user)
             hostel_admin.save()
             login(request, user)
-            return redirect('hostel_admin_dashboard')  # Redirect to the hostel admin dashboard
+            return redirect('hostel_admin_login')  # Redirect to the hostel admin dashboard
     else:
         form = HostelAdminSignupForm()
     return render(request, 'hostel_admin_signup.html', {'form': form})
 
 
 
-# views.py
-from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
-from .forms import StudentLoginForm
-from .models import Student
-from django.core.exceptions import ObjectDoesNotExist
-# views.py
-from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
-from .forms import StudentLoginForm, HostelAdminLoginForm
-from django.core.exceptions import ObjectDoesNotExist
 
 def student_login(request):
     if request.method == 'POST':
@@ -101,9 +94,43 @@ def hostel_admin_login(request):
 
     return render(request, 'choice.html', {'student_form': StudentLoginForm(), 'hostel_admin_form': form})
 
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.urls import reverse
+def profile(request):
+    # This view assumes you have a 'profile_detail.html' template
+    return render(request, 'profile_detail.html')
+
+
+def update_profile(request):
+    try:
+        profile = request.user.student.profile
+    except Student.profile.RelatedObjectDoesNotExist:
+        profile = Profile.objects.create(student=request.user.student)
+
+    if request.method == 'POST':
+        # Handle POST request logic
+        pass
+    else:
+        profile_form = ProfileUpdateForm(instance=profile)
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.student.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            # Redirect to a success page, such as the profile detail view
+            return redirect('profile_detail')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.student.profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+
+    return render(request, 'profile_update.html', context)
+
+
 
 def custom_logout(request):
     logout(request)
@@ -130,3 +157,9 @@ def hostelAdmin_required(view_func):
             return HttpResponse("Permission Denied", status=403)  # Customize the response as needed
 
     return _wrapped_view
+
+
+def view_student_profile(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    profile = student.profile
+    return render(request, 'student_profile.html', {'student': student, 'profile': profile})

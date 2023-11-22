@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Finder Dashboard</title>
+    <style>
+        #sidebar {
+            background: #333;
+            padding-top: 20px;
+            height: 100vh; /* 100% height of the viewport */
+            position: fixed;
+            left: 0;
+            overflow-x: hidden;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        #sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        #sidebar a:hover {
+            color: #f1f1f1;
+        }
+
+        #content {
+            margin-left: 250px; /* Set the initial margin to the width of the sidebar */
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Add a media query for small screens */
+        @media (max-width: 767px) {
+            #sidebar {
+                margin-left: -250px; /* Hide the sidebar on small screens */
+            }
+
+            #content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if request.user.hosteladmin %}
+    <div id="sidebar">
+        <a href="{% url 'hostel_create' %}">Create Hostels</a>
+        <a href="{% url 'booking_requests' %}">Bookings</a>
+        <a href="#">Settings</a>
+    </div>
+   {% else %}
+   <div id="sidebar">
+       <a href={% url 'profile_detail' %}>View Profile</a>
+       <a href={% url 'profile_update' %}>Edit Profile</a>
+    <a href="{% url 'booking_status' %}">Booking Status</a>
+    <a href="#">Settings</a>
+</div>
+
+    {% endif %}
+</body>
+</html>

@@ -1,16 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Profile</title>
-</head>
-<body>
-    <header>
-        <h1>Welcome, {{ user.username }}</h1>
-        <p>University Name: {{ student.university_name }}</p>
-        <!-- Add other student-related information here -->
-        <a href="{% url 'logout' %}">Logout</a>
-    </header>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .container {
+        background-color: #f4f7f6; /* Light gray background for contrast */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+        color: #2d6187; /* Dark blue color for headings */
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    p {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <h1>Profile of {{ student.user.username }}</h1>
+    <p>Email: {{ student.user.email }}</p>
+    <p>Date of Birth: {{ profile.date_of_birth }}</p>
+    <p>Phone Number: {{ profile.phone_number }}</p>
+    <p>Occupation: {{ profile.occupation }}</p>
+    <p>Address: {{ profile.address }}</p>
+    {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+    {% endif %}
+    <!-- Add more fields as needed -->
+</div>
+{% endblock %}

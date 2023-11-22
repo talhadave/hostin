@@ -47,7 +47,8 @@
                     <strong>Room:</strong> {{ booking_request.room.room_number }}<br>
                     <strong>Check-in Date:</strong> {{ booking_request.check_in_date }}<br>
                     <strong>Check-out Date:</strong> {{ booking_request.check_out_date }}<br>
-                    <strong>Student:</strong> {{ booking_request.student.user.username }}<br>
+                    <strong>Student:</strong> {{ booking_request.user.username }}<br>
+                    <strong> Information:</strong> {{ booking_request.user_info}}<br>
                     <strong>Status:</strong> {{ booking_request.status }}<br>
                     <a href="{% url 'approve_booking' booking_request.id %}" class="btn btn-success mr-2">Approve</a>
                     <a href="{% url 'reject_booking' booking_request.id %}" class="btn btn-danger">Reject</a>

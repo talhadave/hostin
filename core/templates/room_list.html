@@ -9,7 +9,7 @@
         <ul class="list-group animate__animated animate__fadeIn">
             {% for room in rooms %}
                 <li class="list-group-item">
-                    <a href="{% url 'room_detail' room.id %}" class="animate__animated animate__fadeInLeft">Room {{ room.room_number }}</a> - Price: ${{ room.room_price }}
+                    <a href="{% url 'room_detail' room.id %}" class="animate__animated animate__fadeInLeft">Room {{ room.room_type }}</a> - Price: ${{ room.room_price }}
                 </li>
             {% empty %}
                 <li class="list-group-item animate__animated animate__fadeInLeft">No rooms available.</li>

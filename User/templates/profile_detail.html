@@ -1,0 +1,21 @@
+<!-- profile_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Profile Detail</h2>
+    <div class="profile-info">
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Date of Birth: {{ user.student.profile.date_of_birth }}</p>
+        <p>Phone Number: {{ user.student.profile.phone_number }}</p>
+        <p>Occupation: {{ user.student.profile.occupation }}</p>
+        <p>Address: {{ user.student.profile.address }}</p>
+        <!-- Display the profile picture if it exists -->
+        {% if user.student.profile.profile_picture %}
+            <img src="{{ user.student.profile.profile_picture.url }}" alt="Profile Picture">
+        {% endif %}
+    </div>
+    <a href="{% url 'profile_update' %}" class="btn btn-primary">Edit Profile</a>
+</div>
+{% endblock %}

@@ -1,0 +1,399 @@
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Hostel List{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom CSS for Hostel List page */
+    body {
+        background: linear-gradient(to right, #87CEEB, #d9e2de);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border: 1px solid #e1e1e1;
+        border-radius: 25px;
+    }
+
+    .table {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container">
+    <h1 class="form-title text-center">Hostel List</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Hostel Name</th>
+                <th>Location</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if user.hosteladmin %}
+                {# Display admin's hostel list #}
+                {% for hostel in admin_hostels %}
+                    <tr>
+                        <td>{{ hostel.hostel_name }}</td>
+                        <td>{{ hostel.hostel_adress }}</td>
+                        <td>
+                            <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No hostels available for administrators.</td>
+                    </tr>
+                {% endfor %}
+                
+                <a href="{% url 'hostel_create' %}" class="btn btn-success rounded-pill mb-3 float-right">Create New Hostel</a>
+                <a href="{% url 'booking_requests' %}" class="btn btn-primary rounded-pill mb-3 float-right">Booking Requests</a>
+            {% else %}
+            <a href="{% url 'booking_status' %}" class="btn btn-primary rounded-pill float-right">Booking Status</a>
+                {% for hostel in student_hostels %}
+                    <tr>
+                        <td>{{ hostel.hostel_name }}</td>
+                        <td>{{ hostel.hostel_adress }}</td>
+                        <td>
+                            <a href="{% url 'hostel_detail_for_student' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No hostels available for students.</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+<div class="container mt-4">
+    <button class="btn-size btn btn-transparent text-black btn-lg" onclick="window.history.back();"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg></button>
+    <div class="mt-4">
+        <a href="{% url 'hostel_update' hostel.id %}" class="btn btn-lg btn-transparent text-primary"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+          </svg></a>
+        <a href="{% url 'hostel_delete' hostel.id %}" class="btn btn-lg text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+          </svg></a>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <img class="img-fluid" src="{{hostel.picture.url}}" alt="Vidyawati Girls Hostel" class="hostel-image mt-3">
+        </div>
+        <div class="col-lg-6">
+            <h1 class="text-primary mb-0">{{hostel.hostel_name}}</h1>
+            <p class="text-muted mb-2">{{hostel.hostel_adress}}</p>
+            <div class="d-flex mb-3">
+                <div class="badge badge-success mr-2">Girls Hostel</div>
+                <div class="badge badge-primary">
+                    {{rating}} <i class="fas fa-star"></i>
+                </div>
+            </div>
+            <p class="text-muted">{{hostel.hostel_adress}}</p>
+            <h5 class="text-primary mb-3">Services</h5>
+           <ul class="list-unstyled mb-4">
+              {% for service in services %}
+                <li>
+                <i class="fas fa-check text-success mr-2"></i>
+                    {{ service.name }}
+                    <a href="{% url 'service_remove' hostel.id service.id  %}" class="btn btn-sm btn-danger ml-2" onclick="return confirm('Are you sure you want to remove this service?');">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M1.5 3a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1V4H1.5V3zm1-1a.5.5 0 0 0-.5.5V4H3V2.5a.5.5 0 0 0-1 0V4H1v11a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V4h1v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4z"/>
+                        <path fill-rule="evenodd" d="M14.5 5a.5.5 0 0 1 .5.5V14a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V5.5a.5.5 0 0 1 1 0V14a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V5.5a.5.5 0 0 1 .5-.5z"/>
+                    </svg>
+                    </a>
+                </li>
+                {% empty %}
+                <li class="text-secondary mr-2">No services available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+<div class="mt-4">
+    <a href="{% url 'feedback' hostel.id %}" class="btn btn-lg btn-primary">Leave Feedback</a>
+</div>
+{% block feedback%}
+{%endblock feedback%}
+
+<div class="row mt-4">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between">
+            <h2 class="m-0 p-0">Rooms in Vidyawati Girls Hostel</h2>
+        </div>
+        <div class="mt-4">
+            <!-- ... (your existing room list code) ... -->
+        </div>
+
+        <div class="mt-4">
+            <h2 class="m-0 p-0">Feedback for {{ hostel.hostel_name }}</h2>
+            {% if hostel.feedback_set.all %}
+                <ul class="list-unstyled">
+                    {% for feedback in hostel.feedback_set.all %}
+                        <li>
+                            <strong>{{ feedback.user.username }}</strong> - {{ feedback.created_at|date:"F d, Y" }}<br>
+                            {{feedback.rating}}
+                            <br>
+                            Comment: {{ feedback.comment }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No feedback available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+            <div class="mt-4">
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>Room Type</div>
+                        <div>Price</div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>Single Room</div>
+                        <div>Rs. 8,000/month</div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>Double Room</div>
+                        <div>Rs. 12,000/month</div>
+                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>Triple Room</div>
+                        <div>Rs. 15,000/month</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOSTINN</title>
+    <!-- Add Bootstrap CSS CDN link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add your custom CSS here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- icon bootsrap -->
+
+    <!-- Add Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <!-- Navigation Bar -->
+    
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    
+        <a class="navbar-brand" href="#">HOSTIIN</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'hostel_list' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% endif %}
+            </ul>
+            {% if user.student %}
+                        
+                    
+                        <form method="get" action="{% url 'search_hostels' %}">
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-pill" name="q"
+                                    placeholder="Search by University Name">
+                                <div class="input-group-append rounded-pill">
+                                    <button class="btn btn-primary rounded-pill" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                
+                    {% endif %}
+        </div>
+
+</nav>
+
+
+    <div class="container mt-5">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Page Content -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1 class="display-4 animate__animated animate__fadeInLeft">Welcome to HOSTINN</h1>
+
+                <p class="lead animate__animated animate__fadeInLeft">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quasi quia, temporibus repellat doloribus facere blanditiis? Tempora ex dolore dignissimos. Nisi consequatur rem sunt sapiente dolor nam tempora, eaque repudiandae officia ab accusamus?
+                    elit.</p>
+                <a href="#" class="btn btn-primary btn-lg animate__animated animate__fadeInLeft">Learn More</a>
+            </div>
+            <div class="col-lg-6">
+                <!-- Add a responsive image with animation -->
+                <img src="{% static 'images/logo.jpg' %} alt="Logo Image" class="img-fluid animate__animated animate__fadeInRight">
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery CDN links -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Animate.css for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.js"></script>
+
+</body>
+
+</html>
+
+
+
+{% extends 'base.html' %}
+
+{% block title %}Room Detail{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom CSS for Room Detail page */
+    body {
+        background: linear-gradient(to right, #87CEEB, #d9e2de);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+
+    .container {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border: 1px solid #e1e1e1;
+        border-radius: 25px;
+    }
+
+    .room-detail-title {
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .room-image {
+        max-width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    .btn-action {
+        font-size: 1.2rem;
+        border-radius: 5px;
+        padding: 10px 20px;
+    }
+
+    /* Add a subtle background color for buttons */
+    .btn-primary,
+    .btn-danger,
+    .btn-secondary,
+    .btn-success {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-size {
+        font-size: large;
+    }
+</style>
+
+<div class="container">
+    <button class="btn-size btn btn-transparent text-black btn-lg" onclick="window.history.back();">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+    </button>
+    <h1 class="room-detail-title text-center">Room Detail</h1>
+
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <h2>Room {{ room.room_type }}</h2>
+            <p>Price: ${{ room.room_price }}</p>
+            <!-- Add more room details here -->
+
+            <!-- Add a room image if available -->
+            {% if room.room_image %}
+                <img class="img-fluid" width="100%" src="{{ room.room_image.url }}" alt="{{ room.room_type }}" class="room-image mt-3">
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="{% url 'room_update' room.id %}" class="btn btn-primary btn-action">Edit Room</a>
+                <a href="{% url 'room_delete' room.id %}" class="btn btn-danger btn-action">Delete Room</a>
+                <a href="{% url 'room_list' %}" class="btn btn-secondary btn-action">Back to Room List</a>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Add any additional content here, e.g., more room details -->
+        </div>
+    </div>
+</div>
+{% endblock %}

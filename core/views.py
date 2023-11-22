@@ -1,16 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import University, Hostel, rooms
-from .forms import HostelForm, RoomForm
+from .forms import HostelForm, RoomForm,FeedbackForm
+from django.contrib.auth.decorators import login_required
+from .models import Hostel, University,Hostel
+from booking.models import Booking
+from .models import Hostel  # Import the Hostel model
+from django.urls import reverse_lazy
+
 
 def university_list(request):
     universities = University.objects.all()
     return render(request, 'university_list.html', {'universities': universities})
 
-from django.shortcuts import render
-from .models import Hostel
-from django.contrib.auth.decorators import login_required
-
-@login_required
+@login_required(login_url="/User/")
 def hostel_list(request):
     if hasattr(request.user, 'hosteladmin'):
         # User is an admin, retrieve admin-specific data
@@ -36,11 +38,15 @@ def room_list(request):
 
 def hostel_detail(request, hostel_id):
     hostel = get_object_or_404(Hostel, id=hostel_id)
-    return render(request, 'hostel_detail.html', {'hostel': hostel})
+    services = hostel.services.all()
+    feedback= hostel.feedback_set.all()
+    return render(request, 'hostel_detail.html', {'hostel': hostel,"services":services})
 
 def room_detail(request, room_id):
     room = get_object_or_404(rooms, id=room_id)
-    return render(request, 'room_detail.html', {'room': room})
+    bookings = Booking.objects.filter(room=room)  # Get all bookings for this room
+    booked_students = [booking.student for booking in bookings]
+    return render(request, 'room_detail.html', {'room': room,'booked_students': booked_students})
 
 def hostel_create(request):
     if request.method == 'POST':
@@ -51,14 +57,9 @@ def hostel_create(request):
             hostel.save()
             return redirect('hostel_list')
     else:
-        form = HostelForm()
-    
+        form = HostelForm()   
     return render(request, 'hostel_form.html', {'form': form})
 
-from django.shortcuts import render, redirect
-from .forms import RoomForm
-from .models import Hostel  # Import the Hostel model
-from django.urls import reverse_lazy
 def room_create(request, hostel_id):
     # Get the hostel instance using the provided hostel_id
 
@@ -89,18 +90,21 @@ def hostel_update(request, hostel_id):
     
     return render(request, 'hostel_form.html', {'form': form})
 
+
 def room_update(request, room_id):
-    room = get_object_or_404(rooms, id=room_id)
-    
+    room = get_object_or_404(rooms, id=room_id)  # Make sure 'Room' is your model class name
+    hostel_id = room.hostel.id  # Assuming the Room model has a 'hostel' foreign key
+
     if request.method == 'POST':
-        form = RoomForm(request.POST, request.FILES, instance=room)
+        form = RoomForm(request.POST, request.FILES, instance=room, hostel_id=hostel_id)
         if form.is_valid():
             form.save()
-            return redirect('room_list')
+            return redirect('room_detail',room_id=room.id)
     else:
-        form = RoomForm(instance=room)
-    
+        form = RoomForm(instance=room, hostel_id=hostel_id)
+
     return render(request, 'room_form.html', {'form': form})
+
 
 def hostel_delete(request, hostel_id):
     hostel = get_object_or_404(Hostel, id=hostel_id)
@@ -117,11 +121,6 @@ def room_delete(request, room_id):
         return redirect('room_list')
     
     return render(request, 'room_delete.html', {'room': room})
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from booking .models import Booking
-from User.views import hostelAdmin_required
 
 
 def booking_requests(request):
@@ -152,29 +151,6 @@ def reject_booking(request, booking_request_id):
     return redirect('booking_requests')
 
 
-# from django.shortcuts import render
-# from .models import Hostel, University
-# from django.contrib.auth.decorators import login_required
-# from django.shortcuts import render
-# from .models import University, Hostel
-
-# def search_hostels(request):
-#     query = request.GET.get('q')
-#     universities = University.objects.filter(name__icontains=query)
-#     hostels = Hostel.objects.filter(hostel_name__icontains=query)
-
-#     context = {
-#         'universities': universities,
-#         'hostels': hostels,
-#         'query': query,
-#     }
-
-#     return render(request, 'search_hostels.html', context)
-
-
-from django.shortcuts import render
-from .models import Hostel, University
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def search_hostels(request):
@@ -200,3 +176,39 @@ def search_hostels(request):
     }
 
     return render(request, 'search_hostels.html', context)
+
+
+# views.py
+
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Services
+
+def service_remove(request, hostel_id, service_id):
+    hostel = get_object_or_404(Hostel, id=hostel_id)
+    service = get_object_or_404(Services, id=service_id)
+
+    if request.method == 'POST':
+        # If the request method is POST, delete the service and redirect to hostel_detail.
+        service.delete()
+        return redirect('hostel_detail', hostel_id=hostel.id)  # Pass hostel.id in the redirect URL.
+
+    return render(request, 'service_remove.html', {'service': service, 'hostel': hostel})
+
+
+
+def feedback(request, hostel_id):
+    hostel = Hostel.objects.get(pk=hostel_id)
+
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user  # Assuming you have user authentication
+            feedback.hostel = hostel
+            feedback.save()
+            return redirect('hostel_detail', hostel_id=hostel_id)
+
+    else:
+        form = FeedbackForm()
+
+    return render(request, 'feedback_form.html', {'form': form, 'hostel': hostel})

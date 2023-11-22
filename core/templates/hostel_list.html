@@ -3,72 +3,83 @@
 {% block title %}Hostel List{% endblock %}
 
 {% block content %}
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    /* Custom CSS for Hostel List page */
-    body {
-        background: linear-gradient(to right, #87CEEB, #d9e2de);
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
-    }
-
-    .container {
-        background-color: rgba(255, 255, 255, 0.8);
-        padding: 20px;
-        border: 1px solid #e1e1e1;
-        border-radius: 25px;
-    }
-
-    .table {
-        margin-top: 20px;
-    }
+  .hostel-card {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  .hostel-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+  .hostel-image {
+      width: 100%;
+      height: auto;
+      border-radius: .25rem;
+  }
+  .text-muted {
+      font-size: 0.9em;
+  }
+  .rounded-pill {
+      transition: background-color 0.3s ease-in-out;
+  }
+  .rounded-pill:hover {
+      background-color: #0056b3;
+  }
 </style>
-
-<div class="container">
-    <h1 class="form-title text-center">Hostel List</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Hostel Name</th>
-                <th>Location</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if user.hosteladmin %}
-                {# Display admin's hostel list #}
-                {% for hostel in admin_hostels %}
-                    <tr>
-                        <td>{{ hostel.hostel_name }}</td>
-                        <td>{{ hostel.hostel_adress }}</td>
-                        <td>
-                            <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3">No hostels available for administrators.</td>
-                    </tr>
-                {% endfor %}
-                
-                <a href="{% url 'hostel_create' %}" class="btn btn-success rounded-pill mb-3 float-right">Create New Hostel</a>
-                <a href="{% url 'booking_requests' %}" class="btn btn-primary rounded-pill mb-3 float-right">Booking Requests</a>
-            {% else %}
-            <a href="{% url 'booking_status' %}" class="btn btn-primary rounded-pill float-right">Booking Status</a>
-                {% for hostel in student_hostels %}
-                    <tr>
-                        <td>{{ hostel.hostel_name }}</td>
-                        <td>{{ hostel.hostel_adress }}</td>
-                        <td>
-                            <a href="{% url 'hostel_detail_for_student' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3">No hostels available for students.</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
-        </tbody>
-    </table>
+</head>
+<body>
+    <div class="container mt-5">
+    {% if user.hosteladmin %}
+        {% for hostel in admin_hostels %}
+  <div class="card hostel-card rounded my-5">
+          <div class="row">
+            <div class="col-4">
+                <img class="hostel-image" src="{{hostel.picture.url}}" alt="...">
+            </div>
+            <div class="col-8">
+            <div class="m-4">
+                <h5 class="text-primary">{{ hostel.hostel_name }}</h5>
+                <p>{{ hostel.hostel_adress }}</p>
+                <p><small class="text-muted">For boys Only</small></p>
+                <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
+            </div>
+            </div>
+          </div>
+          {% empty %}
+              <tr>
+                    <td colspan="3">No hostels available for administrators.</td>
+                </tr>
+           {% endfor %}
+    {% else %}
+           {% for hostel in student_hostels %}
+           <div class="card rounded my-5">
+            <div class="row">
+              <div class="col-4">
+                  <img class="hostel-image" src="{{hostel.picture.url}}" alt="...">
+              </div>
+              <div class="col-8">
+              <div class="m-4">
+                  <h5 class="text-primary">{{ hostel.hostel_name }}</h5>
+                  <p>{{ hostel.hostel_adress }}</p>
+                  <p><small class="text-muted">For boys Only</small></p>
+                  <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
+              </div>
+              </div>
+            </div>
+            {% empty %}
+                <tr>
+                      <td colspan="3">No hostels available for students.</td>
+                  </tr>
+             {% endfor %}
+    {% endif %}
+  </div>
 </div>
-{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+{% endblock content %}
+

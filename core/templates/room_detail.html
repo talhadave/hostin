@@ -1,26 +1,78 @@
 {% extends 'base.html' %}
-
-{% block title %}Room Detail{% endblock %}
+{% load custom_filters %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-6">
-        <h1 class="display-4 animate__animated animate__fadeInDown">Room Detail</h1>
-        <h2 class="animate__animated animate__fadeInLeft">Room {{ room.room_number }}</h2>
-        <p class="animate__animated animate__fadeInLeft">Price: ${{ room.room_price }}</p>
-        <!-- Add more room details here -->
+<title>Rainbow Boys Hostel</title>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  .hostel-image, .room-image {
+    width: 100%;
+    height: auto;
+    border-radius: .25rem;
+  }
+  /* Include other custom styles from your room detail page */
+</style>
+</head>
+<body>
 
-        <!-- Add a room image if available -->
-        {% if room.room_image %}
-            <img src="{{ room.room_image.url }}" alt="{{ room.room_number }}" class="img-fluid mt-3 animate__animated animate__fadeIn">
-        {% endif %}
-
-        <a href="{% url 'room_update' room.id %}" class="btn btn-primary mt-3 animate__animated animate__fadeIn">Edit Room</a>
-        <a href="{% url 'room_delete' room.id %}" class="btn btn-danger mt-3 animate__animated animate__fadeIn">Delete Room</a>
-        <a href="{% url 'room_list' %}" class="btn btn-secondary mt-3 animate__animated animate__fadeIn">Back to Room List</a>
+<div class="container mt-5">
+    <!-- Your back button -->
+    <button class="btn-size btn btn-transparent text-black btn-lg" onclick="window.history.back();">...</button>
+    
+    <!-- Room Detail Title -->
+    <h1 class="room-detail-title text-center">Room Detail</h1>
+    
+    <!-- Room Details -->
+    <div class="card">
+        <div class="row p-2">
+            <div class="col-md-4 col-12 d-flex justify-content-center align-items-center">
+                <!-- Display room image, if available -->
+                {% if room.room_image %}
+                    <img class="room-image" src="{{ room.room_image.url }}" alt="{{ room.room_type }}">
+                {% endif %}
+            </div>
+            <div class="col-md-8 col-12">
+                <div class="card-body">
+                    <h5 class="card-title">{{ room.room_type }}</h5>
+                    <p class="card-text">Price: ${{ room.room_price }}</p>
+                    <!-- Add more room details here -->
+                </div>
+                <h3>Potential Roommates</h3>
+    <ul>
+        {% for student in booked_students %}
+            <li>
+                <a href="{% url 'view_student_profile' student_id=student.id %}">
+                    {{ student.user.username }}'s Profile
+                </a>
+            </li>
+        {% empty %}
+            <li>No bookings for this room yet.</li>
+        {% endfor %}
+    </ul>
+                <!-- Room actions (Edit, Delete, Back to List) -->
+                <div class="mt-4">
+                    <a href="{% url 'room_update' room.id %}" class="btn btn-primary btn-action">Edit Room</a>
+                    <a href="{% url 'room_delete' room.id %}" class="btn btn-danger btn-action">Delete Room</a>
+                    <a href="{% url 'room_list' %}" class="btn btn-secondary btn-action">Back to Room List</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-6">
-        <!-- Add any additional content here, e.g., more room details -->
+    
+    <!-- Include other parts of your hostel template here, such as Services and Owner Details -->
+    <!-- ... -->
+    
+    <!-- List of rooms for the hostel (if applicable) -->
+    <div class="mt-4">
+        <a href="{% url 'book_room' room.id %}">Book this room</a>
+
     </div>
 </div>
+
+<!-- Include your scripts here -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
 {% endblock %}
+
