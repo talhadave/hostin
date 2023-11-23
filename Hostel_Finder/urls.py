@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 from . import main_views as views
 
 urlpatterns = [
-    path('',views.home,name='home'),
+    # path('',views.home,name='home'),
     path('hostel/', include('core.urls')),
-    path('User/', include('User.urls')),
+    path('', include('User.urls')),
     path('booking/', include('booking.urls')),
     path('admin/', admin.site.urls),
 ]

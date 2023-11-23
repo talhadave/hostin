@@ -51,10 +51,12 @@
     </ul>
                 <!-- Room actions (Edit, Delete, Back to List) -->
                 <div class="mt-4">
+                    {% if request.user.hosteladmin%}
                     <a href="{% url 'room_update' room.id %}" class="btn btn-primary btn-action">Edit Room</a>
                     <a href="{% url 'room_delete' room.id %}" class="btn btn-danger btn-action">Delete Room</a>
                     <a href="{% url 'room_list' %}" class="btn btn-secondary btn-action">Back to Room List</a>
                 </div>
+                {% endif%}
             </div>
         </div>
     </div>
@@ -76,3 +78,5 @@
 </body>
 {% endblock %}
 
+{% block welcom_message%}
+{% endblock %}

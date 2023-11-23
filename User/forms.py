@@ -20,11 +20,10 @@ class StudentSignupForm(UserCreationForm):
         queryset=University.objects.all(),
         empty_label="Select your university"
     )
-    contact_number = forms.CharField(max_length=15, required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2','university_name','contact_number']
+        fields = ['username', 'email', 'password1', 'password2','university_name']
 
 
 
@@ -34,13 +33,22 @@ class HostelAdminSignupForm(UserCreationForm):
         for visible in self.visible_fields():
             visible.field.widget.attrs["class"]= "form-control rounded-pill"
             visible.field.widget.attrs["placeholder"]= visible.field.label
-    contact_number = forms.CharField(max_length=15, required=False)
+    contact_number = forms.CharField(label="Contact Number", max_length=15, required=False)
     class Meta:
         model = User
         fields = ('username','email', 'password1', 'password2','contact_number')
 
 # forms.py
 from django import forms
+
+class LoginForm(forms.Form):
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs["class"]= "form-control rounded-pill"
+            visible.field.widget.attrs["placeholder"]= visible.field.label
+    username = forms.CharField(label="Username", required=True)
+    password = forms.CharField(label="Password", required=True, widget=forms.PasswordInput)
 
 class StudentLoginForm(forms.Form):
     username = forms.CharField()
@@ -55,7 +63,11 @@ class HostelAdminLoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField()
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control rounded-pill'
+            visible.field.widget.attrs['placeholder'] = visible.field.label
 
     class Meta:
         model = User
@@ -73,7 +85,7 @@ class ProfileUpdateForm(forms.ModelForm):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control rounded-pill'
-            if visible.name != 'profile_picture':
+            if visible.field.label != 'Profile picture':
                 visible.field.widget.attrs['placeholder'] = visible.field.label
 
 

@@ -3,7 +3,7 @@ from django.contrib.auth import logout,login, authenticate
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.models import User
 from django.urls import reverse 
-from .forms import StudentSignupForm, HostelAdminSignupForm
+from .forms import StudentSignupForm, HostelAdminSignupForm, LoginForm
 from .models import Student, HostelAdmin,Profile
 from django.http import HttpResponse
 from .forms import StudentLoginForm, HostelAdminLoginForm,UserUpdateForm, ProfileUpdateForm
@@ -18,33 +18,67 @@ def student_signup(request):
     if request.method == 'POST':
         form = StudentSignupForm(request.POST)
         if form.is_valid():
-            user = form.save()
             university_name = form.cleaned_data['university_name']
+            user = form.save()
             student = Student(user=user, university_name=university_name)
             student.save()
             Profile.objects.get_or_create(student=student) 
             login(request, user)
-            return redirect('student_login')
+            return redirect('hostel_list_for_student')
     else:
         form = StudentSignupForm()
-    return render(request, 'student_signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 
 def hostel_admin_signup(request):
     if request.method == 'POST':
         form = HostelAdminSignupForm(request.POST)
         if form.is_valid():
+            contact_number = form.cleaned_data["contact_number"]
             user = form.save()
-            hostel_admin = HostelAdmin(user=user)
+            hostel_admin = HostelAdmin(user=user, contact_number=contact_number)
             hostel_admin.save()
             login(request, user)
-            return redirect('hostel_admin_login')  # Redirect to the hostel admin dashboard
+            return redirect('hostel_list')  # Redirect to the hostel admin dashboard
     else:
         form = HostelAdminSignupForm()
-    return render(request, 'hostel_admin_signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 
+def login_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        error =None
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                try:
+                    user.student
+                    role = "student"
+                except Student.DoesNotExist:
+                    user.hosteladmin
+                    role = "hosteladmin"
+                except HostelAdmin.DoesNotExist:
+                    role = None
+                if role is "student":
+                    login(request, user)
+                    return redirect('hostel_list_for_student')
+                elif role is "hosteladmin":
+                    login(request, user)
+                    return redirect('hostel_list')
+                else:
+                    error = "User has no access"
+            else:
+                error = "Invalid User credentials"
+        else:
+            error = "Error in Form"
+        return render(request, 'choice.html', {"login_form": form, "error": error})
+    else:
+        form = LoginForm()
 
+    return render(request, 'choice.html' , {"login_form": form})
 
 def student_login(request):
     if request.method == 'POST':
@@ -100,16 +134,6 @@ def profile(request):
 
 
 def update_profile(request):
-    try:
-        profile = request.user.student.profile
-    except Student.profile.RelatedObjectDoesNotExist:
-        profile = Profile.objects.create(student=request.user.student)
-
-    if request.method == 'POST':
-        # Handle POST request logic
-        pass
-    else:
-        profile_form = ProfileUpdateForm(instance=profile)
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.student.profile)
@@ -134,7 +158,7 @@ def update_profile(request):
 
 def custom_logout(request):
     logout(request)
-    return redirect(reverse('choice_page'))
+    return redirect(reverse('login'))
 
 
 

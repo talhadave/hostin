@@ -1,10 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Finder Dashboard</title>
-    <style>
+
+<style>
         #sidebar {
             background: #333;
             padding-top: 20px;
@@ -46,7 +42,7 @@
             }
         }
     </style>
-</head>
+
 <body>
     {% if request.user.hosteladmin %}
     <div id="sidebar">
@@ -54,14 +50,5 @@
         <a href="{% url 'booking_requests' %}">Bookings</a>
         <a href="#">Settings</a>
     </div>
-   {% else %}
-   <div id="sidebar">
-       <a href={% url 'profile_detail' %}>View Profile</a>
-       <a href={% url 'profile_update' %}>Edit Profile</a>
-    <a href="{% url 'booking_status' %}">Booking Status</a>
-    <a href="#">Settings</a>
-</div>
-
     {% endif %}
-</body>
-</html>
+

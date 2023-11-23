@@ -13,8 +13,8 @@ class Student(models.Model):
         return self.user.username
     
     def save(self, *args, **kwargs):
-         super().save(*args, **kwargs)
-         Profile.objects.get_or_create(student=self)
+        super().save(*args, **kwargs)
+        Profile.objects.get_or_create(student=self)
 
 
 class HostelAdmin(models.Model):

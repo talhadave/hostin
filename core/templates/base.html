@@ -33,22 +33,34 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'hostel_list' %}">Home</a>
                 </li>
+                {% if user.student %}
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile_detail' %}">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'booking_status' %}">Booking Status</a>
+                </li>
+                {% endif %}
             </ul>
-            {% if user.student %}
-                <form method="get" action="{% url 'search_hostels' %}" class="form-inline mx-auto">
-                    <input type="text" class="form-control rounded-pill" name="q" placeholder="Search by University Name">
-                    <button class="btn btn-primary rounded-pill" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </form>
-            {% endif %}
+            
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                     </li>
                 {% endif %}
-            </ul>
+                {% if user.student %}
+                <li class="nav-item">
+                    <form method="get" action="{% url 'search_hostels' %}" class="form-inline mx-auto">
+                        <input type="text" class="form-control rounded-pill" name="q" placeholder="Search by University Name">
+                        <button class="btn btn-primary rounded-pill" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </form>
+                </li>
+                {% endif %}
+                </ul>
         </div>
     </nav>
     
@@ -65,15 +77,13 @@
         </div>
 
         <!-- Page Content -->
+        {% block welcom_message %}
         <div class="container mt-5">
             <div class="row">
                 <div class="col-lg-6">
                     <h1 class="display-4 animate__animated animate__fadeInLeft">Welcome to HOSTINN</h1>
-                    <p class="lead animate__animated animate__fadeInLeft">Lorem ipsum, dolor sit amet consectetur
-                        adipisicing elit. Quasi quia, temporibus repellat doloribus facere blanditiis? Tempora ex
-                        dolore dignissimos. Nisi consequatur rem sunt sapiente dolor nam tempora, eaque repudiandae
-                        officia ab accusamus?
-                        elit.</p>
+                    <p class="lead animate__animated animate__fadeInLeft">HostINN is a web-based app that revolutionizes the way students find and book hostels. HostINN addresses the challenges faced by students relocating for education, offering an innovative web app to simplify hostel searches. Empowering users to discover tailored accommodations, it bridges the gap for students in institutes without hostels. HostINN revolutionizes the process, ensuring a smoother transition for students into academic life in urban areas.
+                    </p>
                     <a href="#" class="btn btn-primary btn-lg animate__animated animate__fadeInLeft">Learn More</a>
                 </div>
                 <div class="col-lg-6">
@@ -83,6 +93,7 @@
                 </div>
             </div>
         </div>
+        {% endblock %}
     </div>
 
     <!-- Bootstrap JS and jQuery CDN links -->
