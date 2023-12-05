@@ -1,67 +1,69 @@
 {% extends 'base.html' %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Booking Requests</title>
-    <!-- Add Bootstrap CSS and JavaScript links here -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <style>
-        /* Add custom CSS for styling */
-        body {
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #007BFF;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            background-color: #fff;
-            margin: 10px;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s;
-        }
-
-        li:hover {
-            transform: scale(1.05);
-        }
-    </style>
-</head>
 {% block content%}
+
 <body>
     <div class="container">
-        <h1>Booking Requests</h1>
-        <ul class="list-unstyled">
-            {% for booking_request in booking_requests %}
-                <li>
-                    <strong>Room:</strong> {{ booking_request.room.room_number }}<br>
-                    <strong>Check-in Date:</strong> {{ booking_request.check_in_date }}<br>
-                    <strong>Check-out Date:</strong> {{ booking_request.check_out_date }}<br>
-                    <strong>Student:</strong> {{ booking_request.user.username }}<br>
-                    <strong> Information:</strong> {{ booking_request.user_info}}<br>
-                    <strong>Status:</strong> {{ booking_request.status }}<br>
-                    <a href="{% url 'approve_booking' booking_request.id %}" class="btn btn-success mr-2">Approve</a>
-                    <a href="{% url 'reject_booking' booking_request.id %}" class="btn btn-danger">Reject</a>
-                </li>
+        <div class="d-flex justify-content-between">
+            <h1>Booking Requests</h1>
+            <select class="form-control" style="width: auto;" onchange="change_status(this);">
+                <option value="pending">Pending</option>
+                <option value="accepted">Accepted</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+
+        {%for idx, booking_request in bookings.items%}
+        <div class="bookings" id="{{idx}}" {% if idx != "pending" %} hidden {%endif%}>
+            {% for booking in booking_request %}
+            <div class="card my-5">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><b>{{ booking.room.hostel }}</b></h5>
+                            <p class="card-text">Room : {{ booking.room }}</p>
+                            <p class="card-text">Student : {{booking.student}}</p>
+                            <p class="card-text">CNIC : {{booking.cnic}}</p>
+                            <p class="card-text">Contact : {{booking.student.contact_number}}</p>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card-body">
+                            <h5 class="card-title"><b>Information</b></h5>
+                            <p class="card-text">{{booking.description}}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card-body">
+                            <h5 class="card-title"><b>{{ booking.status }}</b></h5>
+                            <p class="card-text">Booking Date : {{booking.booking_date}}</p>
+                            {% if booking.status == "Pending" %}
+                            <div class="d-flex justify-content-end">
+                                <a href="{% url 'approve_booking' booking.id %}"
+                                    class="btn btn-success mr-2">Approve</a>
+                                <a href="{% url 'reject_booking' booking.id %}" class="btn btn-danger">Reject</a>
+                            </div>
+                            {%endif%}
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% empty %}
-                <li>No booking requests.</li>
+            <div>No booking requests.</div>
             {% endfor %}
-        </ul>
+        </div>
+        {% endfor %}
     </div>
+    <script>
+        function change_status(ele) {
+            const value = ele.value;
+            const bookings = document.getElementsByClassName('bookings')
+            for (let i = 0; i < bookings.length; i++) {
+                bookings[i].hidden = true
+            }
+            const booking = document.getElementById(value)
+            booking.hidden = false
+        }
+    </script>
 </body>
-</html>
-{% endblock%}
-{% block welcom_message%}
-{% endblock %}
+{% endblock content %}

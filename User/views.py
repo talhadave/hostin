@@ -1,189 +1,142 @@
-# views.py
-from django.contrib.auth import logout,login, authenticate
-from django.shortcuts import render, redirect,get_object_or_404
-from django.contrib.auth.models import User
-from django.urls import reverse 
-from .forms import StudentSignupForm, HostelAdminSignupForm, LoginForm
-from .models import Student, HostelAdmin,Profile
-from django.http import HttpResponse
-from .forms import StudentLoginForm, HostelAdminLoginForm,UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth import logout, login, authenticate, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib import messages
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.urls import reverse_lazy
+
+from .forms import (StudentSignupForm, HostelAdminSignupForm, LoginForm, HostelAdminEditForm,
+                    StudentLoginForm, HostelAdminLoginForm,
+                    UserUpdateForm, ProfileUpdateForm)
+from .models import Student, HostelAdmin, Profile
+from core.models import Hostel,University
 from django.core.exceptions import ObjectDoesNotExist
+
+
+def get_hostels_for_university(request):
+    university_name = request.GET.get('university')
+    hostels = Hostel.objects.filter(university__name=university_name).values('name', 'address')
+    return JsonResponse(list(hostels), safe=False)
+
+
+def landing_page(request):
+    hostel_id = request.GET.get("hostel")
+    university_id = request.GET.get("university")
+    hostels = Hostel.objects.filter(id=hostel_id) if hostel_id else Hostel.objects.filter(university__id=university_id)
+
+    all_hostels = Hostel.objects.all()
+    all_universities = University.objects.all()
+    context = {"hostels": hostels, "all_hostels": all_hostels, "all_universities": all_universities}
+    return render(request, "landing_page.html", context)
+
 
 def choice_page(request):
     if request.user.is_authenticated:
-        return redirect('home')  # Redirect already authenticated users to the home page or dashboard
-    return render(request, 'choice.html')
+        return redirect("home")
+    return render(request, "choice.html")
+
 
 def student_signup(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = StudentSignupForm(request.POST)
         if form.is_valid():
-            university_name = form.cleaned_data['university_name']
             user = form.save()
-            student = Student(user=user, university_name=university_name)
+            student = Student(user=user, university_name=form.cleaned_data["university_name"])
             student.save()
-            Profile.objects.get_or_create(student=student) 
+            Profile.objects.get_or_create(student=student)
             login(request, user)
-            return redirect('hostel_list_for_student')
+            return redirect("hostel_list")
     else:
         form = StudentSignupForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, "signup.html", {"form": form})
 
 
 def hostel_admin_signup(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = HostelAdminSignupForm(request.POST)
         if form.is_valid():
-            contact_number = form.cleaned_data["contact_number"]
             user = form.save()
-            hostel_admin = HostelAdmin(user=user, contact_number=contact_number)
+            hostel_admin = HostelAdmin(user=user, contact_number=form.cleaned_data["contact_number"])
             hostel_admin.save()
             login(request, user)
-            return redirect('hostel_list')  # Redirect to the hostel admin dashboard
+            return redirect("hostel_list")
     else:
         form = HostelAdminSignupForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, "signup.html", {"form": form})
 
 
 def login_view(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = LoginForm(request.POST)
-        error =None
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                try:
-                    user.student
-                    role = "student"
-                except Student.DoesNotExist:
-                    user.hosteladmin
-                    role = "hosteladmin"
-                except HostelAdmin.DoesNotExist:
-                    role = None
-                if role is "student":
-                    login(request, user)
-                    return redirect('hostel_list_for_student')
-                elif role is "hosteladmin":
-                    login(request, user)
-                    return redirect('hostel_list')
-                else:
-                    error = "User has no access"
-            else:
-                error = "Invalid User credentials"
-        else:
-            error = "Error in Form"
-        return render(request, 'choice.html', {"login_form": form, "error": error})
+            user = authenticate(request, username=form.cleaned_data["username"], password=form.cleaned_data["password"])
+            if user:
+                login(request, user)
+                return redirect(request.POST.get("next") or "hostel_list")
+        return render(request, "choice.html", {"login_form": form, "error": "Invalid User credentials"})
     else:
         form = LoginForm()
+    return render(request, "choice.html", {"login_form": form, "next": request.GET.get("next")})
 
-    return render(request, 'choice.html' , {"login_form": form})
 
-def student_login(request):
-    if request.method == 'POST':
-        form = StudentLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                try:
-                    student = user.student
-                    login(request, user)
-                    return redirect('hostel_list_for_student')
-                except ObjectDoesNotExist:
-                    # Student with this username does not exist, show an error message
-                    form.add_error(None, 'Invalid student credentials')
-        else:
-            # Form is not valid, handle the error
-            return render(request, 'choice.html', {'student_form': form, 'hostel_admin_form': HostelAdminLoginForm()})
 
-    else:
-        form = StudentLoginForm()
 
-    return render(request, 'choice.html', {'student_form': form, 'hostel_admin_form': HostelAdminLoginForm()})
-
-def hostel_admin_login(request):
-    if request.method == 'POST':
-        form = HostelAdminLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                try:
-                    hostel_admin = user.hosteladmin
-                    login(request, user)
-                    return redirect('hostel_list')
-                except ObjectDoesNotExist:
-                    # Hostel admin with this username does not exist, show an error message
-                    form.add_error(None, 'Invalid hostel admin credentials')
-        else:
-            # Form is not valid, handle the error
-            return render(request, 'choice.html', {'student_form': StudentLoginForm(), 'hostel_admin_form': form})
-
-    else:
-        form = HostelAdminLoginForm()
-
-    return render(request, 'choice.html', {'student_form': StudentLoginForm(), 'hostel_admin_form': form})
-
+@login_required(login_url="/login/")
 def profile(request):
-    # This view assumes you have a 'profile_detail.html' template
-    return render(request, 'profile_detail.html')
+    return render(request, "profile_detail.html")
 
 
+@login_required(login_url="/login/")
 def update_profile(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         user_form = UserUpdateForm(request.POST, instance=request.user)
         profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.student.profile)
-
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            # Redirect to a success page, such as the profile detail view
-            return redirect('profile_detail')
+            return redirect("profile_detail")
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(instance=request.user.student.profile)
-
-    context = {
-        'user_form': user_form,
-        'profile_form': profile_form,
-    }
-
-    return render(request, 'profile_update.html', context)
+    return render(request, "profile_update.html", {"user_form": user_form, "profile_form": profile_form})
 
 
-
+@login_required(login_url="/login/")
 def custom_logout(request):
     logout(request)
-    return redirect(reverse('login'))
+    return redirect(reverse("login"))
 
 
 
-def student_required(view_func):
-    def _wrapped_view(request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.groups.filter(name='student').exists():
-            return view_func(request, *args, **kwargs)
-        else:
-            return HttpResponse("Permission Denied", status=403)  # Customize the response as needed
 
-    return _wrapped_view
-
-
-
-def hostelAdmin_required(view_func):
-    def _wrapped_view(request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.groups.filter(name='hosteladmin').exists():
-            return view_func(request, *args, **kwargs)
-        else:
-            return HttpResponse("Permission Denied", status=403)  # Customize the response as needed
-
-    return _wrapped_view
+@login_required(login_url="/login/")
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('hostel_list')
+        messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})
 
 
-def view_student_profile(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
-    profile = student.profile
-    return render(request, 'student_profile.html', {'student': student, 'profile': profile})
+@login_required
+def edit_hostel_admin(request, admin_id):
+    hostel_admin = get_object_or_404(HostelAdmin, id=admin_id)
+    user = hostel_admin.user
+
+    if request.method == 'POST':
+        form = HostelAdminEditForm(request.POST, instance=hostel_admin)
+        if form.is_valid():
+            form.save()
+            return redirect("hostel_list")
+    else:
+        form = HostelAdminEditForm(instance=hostel_admin)
+
+    return render(request, 'edit_hostel_admin.html', {'form': form})

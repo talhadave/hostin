@@ -21,6 +21,12 @@ class StudentSignupForm(UserCreationForm):
         empty_label="Select your university"
     )
 
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email__iexact=email).first():
+            raise forms.ValidationError("email already exist")
+        return email
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2','university_name']
@@ -34,6 +40,11 @@ class HostelAdminSignupForm(UserCreationForm):
             visible.field.widget.attrs["class"]= "form-control rounded-pill"
             visible.field.widget.attrs["placeholder"]= visible.field.label
     contact_number = forms.CharField(label="Contact Number", max_length=15, required=False)
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get("contact_number")
+        if HostelAdmin.objects.filter(contact_number__iexact=contact_number).first():
+            raise forms.ValidationError("contact no already exist")
+        return contact_number
     class Meta:
         model = User
         fields = ('username','email', 'password1', 'password2','contact_number')
@@ -88,4 +99,22 @@ class ProfileUpdateForm(forms.ModelForm):
             if visible.field.label != 'Profile picture':
                 visible.field.widget.attrs['placeholder'] = visible.field.label
 
+
+class HostelAdminEditForm(forms.ModelForm):
+    class Meta:
+        model = HostelAdmin
+        fields = ['contact_number']
+
+    def __init__(self, *args, **kwargs):
+        super(HostelAdminEditForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control rounded-pill'
+
+    def save(self, commit=True):
+        hostel_admin = super(HostelAdminEditForm, self).save(commit=False)
+
+        if commit:
+            hostel_admin.save()
+        return hostel_admin
+        
 

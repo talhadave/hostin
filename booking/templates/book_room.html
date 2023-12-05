@@ -1,26 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book a Room</title>
-    <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center">Book a Room</h1>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.as_p }}
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Book Room</button>
-        </form>
-        <a href="{% url 'hostel_detail_for_student' room.id %}" class="btn btn-secondary btn-block mt-3">Back to Hostel Detail</a>
-    </div>
+{% extends 'base.html' %}
 
-    <!-- Include Bootstrap JavaScript if required -->
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
-</body>
-</html>
+{% block title %}Booking{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1 class="text-center mb-4">Book a Room</h1>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <form method="post" class="book-room-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Book Room</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

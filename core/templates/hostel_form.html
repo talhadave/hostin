@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 
 {% block title %}{% if form.instance.id %}Edit Hostel{% else %}Create Hostel{% endif %}{% endblock %}
+{% block style %}
+<!-- Include Select2 CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 
+<!-- Include Select2 JavaScript -->
+<!-- Make sure jQuery is included before Select2 JS as Select2 depends on jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+{% endblock style %}
 {% block content %}
 <style>
     /* Custom CSS for Create/Edit Hostel form */
@@ -47,7 +56,7 @@
     }
 </style>
 
-<div class="container">
+<div class="">
     <h1 class="form-title text-center">{% if form.instance.id %}Edit Hostel{% else %}Create Hostel{% endif %}</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -57,36 +66,5 @@
             <a href="{% url 'hostel_list' %}" class="btn btn-secondary btn-action">Cancel</a>
         </div>
     </form>
-    <div class="map-container">
-        {% if form.instance.embedCode %}
-            {{ form.instance.embedCode | safe }}
-        {% else %}
-            <iframe id="map" style="border:0; width: 100%; height: 400px;" allowfullscreen="" loading="lazy"></iframe>
-        {% endif %}
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const embedCodeInput = document.getElementById('id_embedCode');
-            const mapIframe = document.getElementById('map');
-    
-            function updateMap() {
-                if (embedCodeInput.value.startsWith('<iframe') && embedCodeInput.value.endsWith('</iframe>')) {
-                    mapIframe.outerHTML = embedCodeInput.value; // Replace the entire iframe element
-                } else {
-                    mapIframe.src = embedCodeInput.value; // Or update just the src if it's a URL
-                }
-            }
-    
-            // Update map when the embed code input changes
-            embedCodeInput.addEventListener('input', updateMap);
-    
-            // Initial map update
-            updateMap();
-        });
-    </script>
-    
-    
 </div>
-{% endblock %}
-{% block welcom_message%}
 {% endblock %}

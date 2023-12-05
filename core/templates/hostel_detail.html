@@ -1,109 +1,154 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
 {% block content %}
-<title>Rainbow Boys Hostel</title>
+<title>{{hostel.name}}</title>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    body { font-family: 'Open Sans', sans-serif; }
-    .btn-transparent { background: transparent; border: 1px solid #000; }
-    .btn-transparent:hover { background: #000; color: #fff; }
-    .hostel-image { width: 100%; height: auto; border-radius: .25rem; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
-    .btn-success { background-color: #28a745; border: none; }
-    .btn-success:hover { background-color: #218838; }
-    .list-group-item { transition: background-color 0.3s; }
-    .list-group-item:hover { background-color: #f8f9fa; }
-    #toggleMapButton { margin-top: 15px; }
-    .map-container iframe { width: 100%; height: 300px; border: none; }
-    @media (max-width: 767px) {
-        #sidebar { margin-left: -250px; }
-        #content { margin-left: 0; }
+    body {
+        font-family: 'Open Sans', sans-serif;
+        background-color: #eef2f7;
+        /* Lighter background for overall page */
     }
-</style>
-</head>
-<body>
-{% block sidbar %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hostel Finder Dashboard</title>
-    <style>
+
+    .card {
+        background-color: #fff;
+        /* White background for cards */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        /* Rounded corners for cards */
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary,
+    .btn-success {
+        color: #fff;
+        /* White text for better readability */
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        /* Slightly darker blue on hover */
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        /* Green background for success buttons */
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        /* Slightly darker green on hover */
+    }
+
+    .btn-transparent {
+        background: transparent;
+        border: 1px solid #000;
+    }
+
+    .btn-transparent:hover {
+        background: #000;
+        color: #fff;
+    }
+
+    .hostel-image {
+        width: 100%;
+        height: auto;
+        border-radius: .25rem;
+    }
+
+    .text-muted {
+        font-size: 0.9em;
+        color: #6c757d;
+        /* Muted text for less emphasis */
+    }
+
+    .list-group-item {
+        transition: background-color 0.3s;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        /* Light hover effect for list items */
+    }
+
+    #toggleMapButton {
+        margin-top: 15px;
+        background-color: #007bff;
+        /* Consistent color for the map button */
+        color: #fff;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 300px;
+        border: none;
+        border-radius: .25rem;
+        /* Rounded corners for the map */
+    }
+
+    @media (max-width: 767px) {
         #sidebar {
-            background: #333;
-            padding-top: 20px;
-            height: 100vh; /* 100% height of the viewport */
-            position: fixed;
-            left: 0;
-            overflow-x: hidden;
-            z-index: 1000;
-            transition: all 0.3s;
-        }
-
-        #sidebar a {
-            padding: 15px 20px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-        }
-
-        #sidebar a:hover {
-            color: #f1f1f1;
+            margin-left: -250px;
         }
 
         #content {
-            margin-left: 250px; /* Set the initial margin to the width of the sidebar */
-            padding: 20px;
-            transition: all 0.3s;
+            margin-left: 0;
         }
-
-        /* Add a media query for small screens */
-        @media (max-width: 767px) {
-            #sidebar {
-                margin-left: -250px; /* Hide the sidebar on small screens */
-            }
-
-            #content {
-                margin-left: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-     {% if request.user%}
-    <div id="sidebar">
-        <a href="{% url 'hostel_create' %}">Create Hostels</a>
-        <a href="{% url 'booking_requests' %}">Bookings</a>
-        <a href="{% url 'hostel_update' hostel_id=hostel.id %}">Update Hostel</a>
-        <a href="{% url 'hostel_delete' hostel.id %}">Delete Hostel</a>
-        <a href="#">Settings</a>
-    </div>
-</body>
-</html>
-
-{% endblock sidbar %}
+    }
+</style>
 <div class="container mt-5">
-    <button class="btn-size btn btn-transparent text-black btn-lg" onclick="window.history.back();"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-      </svg></button>
-      <div class="card mb-4">
+    <button class="btn-size btn btn-transparent text-black btn-lg" onclick="window.history.back();"><svg
+            xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+        </svg></button>
+    <div class="card mb-4">
         <div class="row p-2">
-            <div class="col-md-4 col-12 d-flex justify-content-center align-items-center">
-                <img src="{{ hostel.picture.url }}" class="hostel-image" alt="Hostel Image">
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                {% if hostel.picture%}
+                <img src="{{ hostel.picture.url }}" class="hostel-image image-fluid" alt="Hostel Image">
+                {% else %}
+                <div>
+                    picture
+                </div>
+                {% endif %}
             </div>
             <div class="col-md-8 col-12">
                 <div class="card-body">
                     <h5 class="card-title">{{ hostel.hostel_name }}</h5>
-                    <p class="card-text">{{ hostel.hostel_address }}</p>
-                    <p class="card-text"><small class="text-muted">For boys Only</small></p>
+                    <p class="card-text">{{ hostel.hostel_adress }}</p>
+                    <p class="card-text"><small class="text-muted">{{hostel.hostel_type}}</small></p>
+                    {% if hostel.embedCode %}
+                    <button id="toggleMapButton" class="btn btn-primary my-2">Location</button>
+                    {% endif %}
+                    {% if hostel.ownerUser == user %}
+                    <div class="text-right">
+                        <a href="{% url 'hostel_update' hostel.id %}" class="btn btn-primary">Edit</a>
+                        <button type="button" data-toggle="modal" data-target="#DeleteModal"
+                            class="btn btn-danger shadow">
+                            Delete
+                        </button>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
-
+    <div>
+        <div class="map-container" style="display: none;">
+            {% if '<iframe' in hostel.embedCode %}
+            {{ hostel.embedCode | safe }}
+            {% else %}
+            <iframe src="{{ hostel.embedCode }}" allowfullscreen="" loading="lazy"></iframe>
+            {% endif %}
+        </div>
+    </div>
     <!-- Services and Owner Details -->
     <div class="row">
         <div class="col-md-6 mb-4">
@@ -111,8 +156,10 @@
                 <div class="card-body">
                     <h6 class="text-center">Services</h6>
                     <ul>
-                        {% for service in services %}
-                        <li class="fas fa-check text-success mr-2">{{ service.name }}</li>
+                        {% for service in hostel.services|load_service %}
+                        <li class="text-success">{{ service }}</li>
+                        {% empty %}
+                        <div class="text-center">Not mention yet.</div>
                         {% endfor %}
                     </ul>
                 </div>
@@ -122,103 +169,82 @@
             <div class="card h-100">
                 <div class="card-body">
                     <h6 class="text-center text-muted">Owner Details</h6>
-                    <p>{{ request.user.username }}</p>
-                    <p>{{ request.user.email }}</p>
-                    <p>{{ user.hosteladmin.contact_number }}</p>
+                    <p>Name : {{ hostel.ownerUser.username }}</p>
+                    <p>Email : {{ hostel.ownerUser.email }}</p>
+                    <p>Contact Number: {{ hostel.ownerUser.hosteladmin.contact_number|default:"-" }}</p>
+                    {% if user.is_authenticated and user.hosteladmin %}
+                    <div class="text-right">
+                    <a href="{% url 'hostel_admin_edit' user.hosteladmin.id %}" class="btn btn-primary">Edit Information</a> 
                 </div>
+                {% endif %}
+                </div>
+
             </div>
         </div>
-    </div>
-    <div>
-        {% if hostel.embedCode %}
-        <p>Location: {{hostel.hostel_adress}}</p>
-            <button id="toggleMapButton" class="btn btn-primary">Show Map</button>
-            <div class="map-container" style="display: none;">
-                {% if '<iframe' in hostel.embedCode %}
-                    {{ hostel.embedCode | safe }}
-                {% else %}
-                    <iframe src="{{ hostel.embedCode }}" allowfullscreen="" loading="lazy"></iframe>
-                {% endif %}
-            </div>
-        {% else %}
-            <p>Map not available.</p>
-        {% endif %}
     </div>
 
-    
-        <!-- Map Container (Initially Hidden) -->
-        <div class="map-container" style="display: none;">
-            {% if hostel.embedCode %}
-                {% if '<iframe' in hostel.embedCode %}
-                    {{ hostel.embedCode | safe }}  <!-- Renders the complete iframe tag -->
-                {% else %}
-                    <!-- Smaller iframe size -->
-                    <iframe src="{{ hostel.embedCode }}" style="border:0; width: 300px; height: 200px;" allowfullscreen="" loading="lazy"></iframe>
-                {% endif %}
-            {% endif %}
+
+
+    <div class="mb-4">
+        <div class="list-group-item">
+            <div class="d-flex justify-content-between">
+                <div>
+                    Room No
+
+                </div>
+                <div>
+                    Price
+                </div>
+
+            </div>
+            <!-- Display room image, if available -->
+
         </div>
-        <div class="mb-4">
+        <div class="list-group">
+            {% for room in hostel.room.all %}
             <div class="list-group-item">
                 <div class="d-flex justify-content-between">
                     <div>
-                        Room No
-        
+                        <a href="{% url 'room_detail' room.id %}">{{ room.room_type }}</a>
                     </div>
                     <div>
-                        Price
-                    </div>
-        
-                </div>
-                <!-- Display room image, if available -->
-                
-            </div>
-            <div class="list-group">
-                {% for room in hostel.rooms_set.all %}
-                <div class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <a href="{% url 'room_detail' room.id %}">{{ room.room_type }}</a>
-                        </div>
-                        <div>
-                            {{ room.room_price }}
-                        </div>
+                        {{ room.room_price }}
                     </div>
                 </div>
-                {% empty %}
-                <div class="list-group-item text-center">No rooms available for this hostel.</div>
-                {% endfor %}
             </div>
-            {% if request.user.hosteladmin %}
-            <a href="{% url 'room_create' hostel_id=hostel.id %}" class="btn btn-success mt-3">Add New Room</a>
-            {% endif %}
+            {% empty %}
+            <div class="list-group-item text-center">No rooms available for this hostel.</div>
+            {% endfor %}
+
         </div>
+        {% if hostel.ownerUser == user %}
+        <a href="{% url 'room_create' hostel_id=hostel.id %}" class="btn btn-success mt-3">Add New Room</a>
+        {% endif %}
     </div>
-    </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.getElementById('toggleMapButton');
-            const mapContainer = document.querySelector('.map-container');
-    
-            toggleButton.addEventListener('click', function() {
-                if (mapContainer.style.display === 'none') {
-                    mapContainer.style.display = 'block';
-                    toggleButton.textContent = 'Hide Map';
-                } else {
-                    mapContainer.style.display = 'none';
-                    toggleButton.textContent = 'Show Map';
-                }
-            });
+</div>
+</div>
+{% url 'hostel_delete' hostel.id as action_url %}
+{% include 'delete_modal.html' with title="Hostel" url=action_url %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleButton = document.getElementById('toggleMapButton');
+        const mapContainer = document.querySelector('.map-container');
+
+        toggleButton.addEventListener('click', function () {
+            if (mapContainer.style.display === 'none') {
+                mapContainer.style.display = 'block';
+            } else {
+                mapContainer.style.display = 'none';
+            }
         });
-    </script>
-    
-  </div>
-  
+    });
+</script>
+
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
+
 {%endblock%}
-{% block welcom_message%}
-{% endblock %} 

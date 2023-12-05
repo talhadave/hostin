@@ -2,9 +2,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # University URLs
-    path('universities/', views.university_list, name='university_list'),
-
     # Hostel URLs
     path('', views.hostel_list, name='hostel_list'),
     path('hostels/create/', views.hostel_create, name='hostel_create'),
@@ -14,11 +11,9 @@ urlpatterns = [
     path('booking-requests/', views.booking_requests, name='booking_requests'),
     path('approve-booking/<int:booking_request_id>/', views.approve_booking, name='approve_booking'),
     path('reject-booking/<int:booking_request_id>/', views.reject_booking, name='reject_booking'),
-    path('hostel/service/<int:hostel_id>/<int:service_id>/remove/', views.service_remove, name='service_remove'),
-    path('hostel/<int:hostel_id>/feedback/', views.feedback, name='feedback'),
+
 
     # Room URLs
-    path('rooms/', views.room_list, name='room_list'),
     path('rooms/create/<int:hostel_id>/', views.room_create, name='room_create'),
     path('rooms/<int:room_id>/', views.room_detail, name='room_detail'),
     path('rooms/<int:room_id>/update/', views.room_update, name='room_update'),

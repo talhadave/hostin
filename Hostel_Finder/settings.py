@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'core',
     'User',
     'booking',
+    'widget_tweaks',
     'django_google_maps',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -129,3 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+
+STRIPE_PUBLIC_KEY = 'pk_test_51OFVvaAALwGtRbyKVKjUcg7acWKwkC4QTl8Fo6KMeS6uLtU82ga1dX0k4rNDURTqY9xEav3xqCmna2Ag0ELu0hI300L5lWzBTU'
+STRIPE_SECRET_KEY = 'sk_test_51OFVvaAALwGtRbyKTjmoPO0fm5jrkcs9KYjvHzKuMbAOXobcvPHlCXBorx2Nf2shbP1ndB6DwSYaMLZZIwKWgNqr00vCJ5tA7J'

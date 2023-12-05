@@ -3,14 +3,15 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # path('', views.choice_page, name='choice_page'),
+    path('', views.landing_page, name='landing_page'),
     path('student/signup/', views.student_signup, name='student_signup'),
     path('hostel/signup/', views.hostel_admin_signup, name='hostel_admin_signup'),
     path('login/', views.login_view, name='login'),
-    path('hostel/login/', views.hostel_admin_login, name='hostel_admin_login'),
     path('profile/update/', views.update_profile, name='profile_update'),
     path('profile/', views.profile, name='profile_detail'),
-    path('students/profile/<int:student_id>/', views.view_student_profile, name='view_student_profile'),
     path('logout/', views.custom_logout, name='logout'),
+    path('change_password/', views.change_password, name='change_password'),
+     path('hostel-admin/edit/<int:admin_id>/', views.edit_hostel_admin, name='hostel_admin_edit'),
+    path('get-hostels-for-university/', views.get_hostels_for_university, name='get_hostels_for_university'),
     # Add more URLs as needed for student profiles, hostel admin dashboard, etc.
 ]

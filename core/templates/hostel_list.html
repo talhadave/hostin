@@ -5,81 +5,92 @@
 {% block content %}
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  .hostel-card {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  }
-  .hostel-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
-  .hostel-image {
-      width: 100%;
-      height: auto;
-      border-radius: .25rem;
-  }
-  .text-muted {
-      font-size: 0.9em;
-  }
-  .rounded-pill {
-      transition: background-color 0.3s ease-in-out;
-  }
-  .rounded-pill:hover {
-      background-color: #0056b3;
-  }
+    body {
+        background-color: #f4f4f8;
+        /* Light grey background for contrast */
+    }
+
+    .hostel-card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        background-color: #fff;
+        /* White card background */
+        border-radius: 10px;
+        /* Rounded corners for the card */
+        overflow: hidden;
+        /* Ensures the image aligns well with card corners */
+    }
+
+    .hostel-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .hostel-image {
+        width: 100%;
+        height: 200px;
+        /* Fixed height for uniformity */
+        object-fit: cover;
+        /* Ensures the image covers the area nicely */
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .text-muted {
+        font-size: 0.9em;
+    }
+
+    .rounded-pill {
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .rounded-pill:hover {
+        background-color: #007bff;
+        /* Slightly darker blue on hover */
+        color: white;
+    }
+
+    .btn-primary {
+        color: white;
+        /* Ensures text is white for readability */
+    }
 </style>
-</head>
-<body>
-    <div class="container mt-5">
+
+<div class="container mt-5">
+    {% for hostel in hostels %}
+    <div class="card hostel-card rounded my-5">
+        <div class="row no-gutters">
+            <div class="col-md-4 d-flex justify-content-center align-items-center">
+                {% if hostel.picture%}
+                <img src="{{ hostel.picture.url }}" class="hostel-image" alt="Hostel Image">
+                {% else %}
+                <div class="">
+                    picture
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ hostel.hostel_name }}</h5>
+                    <p class="card-text">{{ hostel.hostel_adress }}</p>
+                    <p><small class="text-muted">{{hostel.hostel_type}}</small></p>
+                    <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
     {% if user.hosteladmin %}
-        {% for hostel in admin_hostels %}
-  <div class="card hostel-card rounded my-5">
-          <div class="row">
-            <div class="col-4">
-                <img class="hostel-image" src="{{hostel.picture.url}}" alt="...">
-            </div>
-            <div class="col-8">
-            <div class="m-4">
-                <h5 class="text-primary">{{ hostel.hostel_name }}</h5>
-                <p>{{ hostel.hostel_adress }}</p>
-                <p><small class="text-muted">For boys Only</small></p>
-                <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
-            </div>
-            </div>
-          </div>
-          {% empty %}
-              <tr>
-                    <td colspan="3">No hostels available for administrators.</td>
-                </tr>
-           {% endfor %}
+    <div>Not create any hostel yet</div>
     {% else %}
-           {% for hostel in student_hostels %}
-           <div class="card rounded my-5">
-            <div class="row">
-              <div class="col-4">
-                  <img class="hostel-image" src="{{hostel.picture.url}}" alt="...">
-              </div>
-              <div class="col-8">
-              <div class="m-4">
-                  <h5 class="text-primary">{{ hostel.hostel_name }}</h5>
-                  <p>{{ hostel.hostel_adress }}</p>
-                  <p><small class="text-muted">For boys Only</small></p>
-                  <a href="{% url 'hostel_detail' hostel.id %}" class="btn btn-primary rounded-pill">View Details</a>
-              </div>
-              </div>
-            </div>
-            {% empty %}
-                <tr>
-                      <td colspan="3">No hostels available for students.</td>
-                  </tr>
-             {% endfor %}
+    <div>Not any hostel found</div>
     {% endif %}
-  </div>
+    {% endfor %}
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-</body>
 {% endblock content %}
-

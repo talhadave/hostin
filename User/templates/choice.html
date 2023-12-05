@@ -52,7 +52,7 @@
                         <div class="animate__animated animate__fadeInUp">
                             <div id="studentDiv" style="display: block;">
                                 <!-- Student login form goes here -->
-                                <form method="post">
+                                <form method="post" autocomplete="off">
                                     {% csrf_token %}
                                     <div class="form-outline mb-4">
                                         <label class="form-label" for="studentUsername">Username</label>
@@ -64,6 +64,9 @@
                                         {{login_form.password}}
                                     </div>
                                     <p class="p-0 m-0 text-center text-danger">{{error}}</p>
+                                    {% if request.GET.next %}
+                                    <input type="hidden" name="next" value="{{ request.GET.next }}">
+                                {% endif %}
                                     <div class="d-flex justify-content-end">
                                         <button class="btn btn-success mb-3 rounded-5 px-4" type="submit">Login</button>
                                     </div>
